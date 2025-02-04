@@ -43,12 +43,28 @@ app.use(express.urlencoded({extended:true}));
 app.use(auth(config))
 
 app.get("/", (req, res) => {
-  if (req.oidc.isAuthenticated()){
-    res.send("Logged In");
+  if (req.oidc.isAuthenticated()) {
+    const { name, email } = req.oidc.user;  // Extract user info
+
+    // Create an HTML response using string interpolation
+    const htmlResponse = `
+      <html>
+        <head>
+          <title>Welcome to Cupcake Land!</title>
+        </head>
+        <body>
+          <h1>Welcome, ${name}!</h1>
+          <p>Your email: ${email}</p>
+          <p>You are now logged in.</p>
+        </body>
+      </html>
+    `;
+
+    res.send(htmlResponse);  // Send back the HTML response
   } else {
     res.send("Logged Out");
   }
-})
+});
 
 app.get('/cupcakes', async (req, res, next) => {
   try {
